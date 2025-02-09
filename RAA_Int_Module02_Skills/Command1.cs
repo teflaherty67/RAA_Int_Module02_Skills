@@ -70,15 +70,16 @@ namespace RAA_Int_Module02_Skills
             {
                 t.Start("Insert tags");
 
-                foreach (Element cureElem in viewCol)
+                foreach (Element curElem in viewCol)
                 {
                     // 3. get point from location
                     XYZ insPoint;
                     LocationCurve locCurve;
                     LocationPoint locPoint;
 
-                    Location curLoc = cureElem.Location;
+                    Location curLoc = curElem.Location;
 
+                    // check if element has a location
                     if (curLoc == null)
                         continue;
 
@@ -90,31 +91,55 @@ namespace RAA_Int_Module02_Skills
                     }
                     else
                     {
-                        // is a locatin curve
+                        // is a location curve
                         locCurve = curLoc as LocationCurve;
                         Curve curCurve = locCurve.Curve;
 
+                        // set insertion point to the midppoint of the curve
                         insPoint = Utils.GetMidpointBetweenTwoPoints(curCurve.GetEndPoint(0), curCurve.GetEndPoint(1));
                     }
 
-                    FamilySymbol curTagType = d_Tags[cureElem.Category.Name];
+                    FamilySymbol curTagType = d_Tags[curElem.Category.Name];
 
                     // 4. create reference to element
-                    Reference curRef = new Reference(cureElem);
+                    Reference curRef = new Reference(curElem);
 
                     // 5a. place tag
                     IndependentTag newTag = IndependentTag.Create(curDoc, curTagType.Id, curView.Id,
                         curRef, false, TagOrientation.Horizontal, insPoint);
 
                     // 5b. place area tag
-                    if (cureElem.Category.Name == "Areas")
+                    if (curElem.Category.Name == "Areas")
                     {
                         ViewPlan curAreaPlan = curView as ViewPlan;
-                        Area curArea = cureElem as Area;
+                        Area curArea = curElem as Area;
 
                         AreaTag curAreaTag = curDoc.Create.NewAreaTag(curAreaPlan, curArea, new UV(insPoint.X, insPoint.Y));
                         curAreaTag.TagHeadPosition = new XYZ(insPoint.X, insPoint.Y, 0);
                         curAreaTag.HasLeader = false;
+                    }
+
+                    // code snippet for checking wall type
+                    if(curElem.Category.Name == "Walls")
+                    {
+                        // cast the element as a wall
+                        Wall curWall = curElem as Wall;
+                        WallType curWallType = curWall.WallType;
+
+                        if (curWallType.Kind == WallKind.Curtain)
+                        {
+                            TaskDialog.Show("Test", "Found a curtain wall!");
+                        }
+                    }
+
+                    // code snippet for checking view type
+
+                    // cast the element as a view type
+                    ViewType curViewType = curView.ViewType;
+
+                    if (curViewType == ViewType.AreaPlan)
+                    {
+                        TaskDialog.Show("Test", "This is an area plan!");
                     }
                 }
 

@@ -16,9 +16,14 @@ namespace RAA_Int_Module02_Skills.Common
             return curPanel;
         }
 
-        internal static XYZ GetMidpointBetweenTwoPoints(XYZ xYZ1, XYZ xYZ2)
+        internal static XYZ GetMidpointBetweenTwoPoints(XYZ point1, XYZ point2)
         {
-            throw new NotImplementedException();
+            XYZ midPoint = new XYZ(
+                (point1.X + point2.X) / 2,
+                (point1.Y + point2.Y) / 2,
+                (point1.Z + point2.Z) / 2);
+
+            return midPoint;
         }
 
         internal static RibbonPanel GetRibbonPanelByName(UIControlledApplication app, string tabName, string panelName)
