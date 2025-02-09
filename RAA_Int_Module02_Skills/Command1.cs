@@ -146,7 +146,6 @@ namespace RAA_Int_Module02_Skills
                 t.Commit();
             }
 
-
             return Result.Succeeded;
         }
         internal static PushButtonData GetButtonData()
